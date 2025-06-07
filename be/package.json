@@ -10,12 +10,22 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.0.2",
+    "@ai-sdk/azure": "^1.0.2",
+    "@ai-sdk/deepseek": "^1.0.2",
+    "@ai-sdk/fireworks": "^1.0.2",
+    "@ai-sdk/google": "^1.0.2",
+    "@ai-sdk/groq": "^1.0.2",
+    "@ai-sdk/openai": "^1.0.2",
+    "@ai-sdk/xai": "^1.0.2",
     "@anthropic-ai/sdk": "^0.32.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "ai": "^4.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "ollama-ai-provider": "^1.0.2",
     "typescript": "^5.7.2"
   }
 }

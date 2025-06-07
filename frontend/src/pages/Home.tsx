@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wand2 } from 'lucide-react';
-import axios from "axios";
-import { BACKEND_URL } from '../config';
+import { ModelSelector } from '../components/ModelSelector';
 
 export function Home() {
   const [prompt, setPrompt] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (prompt.trim()) {
-      navigate('/builder', { state: { prompt } });
+      navigate('/builder', { state: { prompt, model: selectedModel } });
     }
   };
 
@@ -32,15 +32,32 @@ export function Home() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe the website you want to build..."
-              className="w-full h-32 p-4 bg-gray-900 text-gray-100 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder-gray-500"
-            />
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                AI Model
+              </label>
+              <ModelSelector
+                selectedModel={selectedModel}
+                onModelChange={setSelectedModel}
+              />
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Project Description
+              </label>
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Describe the website you want to build..."
+                className="w-full h-32 p-4 bg-gray-900 text-gray-100 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder-gray-500"
+              />
+            </div>
+            
             <button
               type="submit"
-              className="w-full mt-4 bg-blue-600 text-gray-100 py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              disabled={!prompt.trim()}
+              className="w-full bg-blue-600 text-gray-100 py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Generate Website Plan
             </button>

@@ -5,6 +5,7 @@ import { FileExplorer } from '../components/FileExplorer';
 import { TabView } from '../components/TabView';
 import { CodeEditor } from '../components/CodeEditor';
 import { PreviewFrame } from '../components/PreviewFrame';
+import { ModelSelector } from '../components/ModelSelector';
 import { Step, FileItem, StepType } from '../types';
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
@@ -24,8 +25,9 @@ export default Component;`;
 
 export function Builder() {
   const location = useLocation();
-  const { prompt } = location.state as { prompt: string };
+  const { prompt, model: initialModel } = location.state as { prompt: string; model?: string };
   const [userPrompt, setPrompt] = useState("");
+  const [selectedModel, setSelectedModel] = useState(initialModel || '');
   const [llmMessages, setLlmMessages] = useState<{role: "user" | "assistant", content: string;}[]>([]);
   const [loading, setLoading] = useState(false);
   const [templateSet, setTemplateSet] = useState(false);
@@ -152,7 +154,8 @@ export function Builder() {
 
   async function init() {
     const response = await axios.post(`${BACKEND_URL}/template`, {
-      prompt: prompt.trim()
+      prompt: prompt.trim(),
+      model: selectedModel
     });
     setTemplateSet(true);
     
@@ -168,7 +171,8 @@ export function Builder() {
       messages: [...prompts, prompt].map(content => ({
         role: "user",
         content
-      }))
+      })),
+      model: selectedModel
     })
 
     setLoading(false);
@@ -193,8 +197,18 @@ export function Builder() {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col">
       <header className="bg-gray-800 border-b border-gray-700 px-6 py-4">
-        <h1 className="text-xl font-semibold text-gray-100">Website Builder</h1>
-        <p className="text-sm text-gray-400 mt-1">Prompt: {prompt}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-100">Website Builder</h1>
+            <p className="text-sm text-gray-400 mt-1">Prompt: {prompt}</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <ModelSelector
+              selectedModel={selectedModel}
+              onModelChange={setSelectedModel}
+            />
+          </div>
+        </div>
       </header>
       
       <div className="flex-1 overflow-hidden">
@@ -224,7 +238,8 @@ export function Builder() {
 
                     setLoading(true);
                     const stepsResponse = await axios.post(`${BACKEND_URL}/chat`, {
-                      messages: [...llmMessages, newMessage]
+                      messages: [...llmMessages, newMessage],
+                      model: selectedModel
                     });
                     setLoading(false);
 
